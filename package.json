@@ -1,0 +1,14 @@
+{
+  "name": "vue-form-sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nuxt"
+  },
+  "author": "sigwyg",
+  "license": "ISC",
+  "dependencies": {
+    "nuxt": "^2.10.2"
+  }
+}
