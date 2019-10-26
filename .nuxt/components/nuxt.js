@@ -5,7 +5,6 @@ import NuxtError from './nuxt-error.vue'
 
 import NuxtChild from './nuxt-child'
 
-// @vue/component
 export default {
   name: 'Nuxt',
   components: {

@@ -24,7 +24,6 @@ const observer = window.IntersectionObserver && new window.IntersectionObserver(
   })
 })
 
-// @vue/component
 export default {
   name: 'NuxtLink',
   extends: Vue.component('RouterLink'),

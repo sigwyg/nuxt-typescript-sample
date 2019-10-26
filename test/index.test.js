@@ -3,10 +3,14 @@ import test from 'ava'
 import { Nuxt, Builder } from 'nuxt'
 
 // Nuxt.js を初期化し localhost:4000 のリスニングを開始します
-test.before('Init Nuxt.js', async (t) => {
+test.before('Init Nuxt.js', async t => {
   const rootDir = resolve(__dirname, '..')
   let config = {}
-  try { config = require(resolve(rootDir, 'nuxt.config.js')) } catch (e) {}
+  try {
+    config = require(resolve(rootDir, 'nuxt.config.js'))
+  } catch (e) {
+    console.log(e)
+  }
   config.rootDir = rootDir // project folder
   config.dev = false // production build
   config.mode = 'universal' // Isomorphic application
@@ -17,7 +21,7 @@ test.before('Init Nuxt.js', async (t) => {
 })
 
 // 生成された HTML のみをテストする例
-test('Route / exists and render HTML', async (t) => {
+test('Route / exists and render HTML', async t => {
   const { nuxt } = t.context
   const context = {}
   const { html } = await nuxt.renderRoute('/', context)
@@ -25,7 +29,7 @@ test('Route / exists and render HTML', async (t) => {
 })
 
 // DOM チェックを経由してテストする例
-test('Route / exists and renders HTML with CSS applied', async (t) => {
+test('Route / exists and renders HTML with CSS applied', async t => {
   const { nuxt } = t.context
   const window = await nuxt.renderAndGetWindow('http://localhost:4000/')
   const element = window.document.querySelector('.red')
@@ -36,7 +40,7 @@ test('Route / exists and renders HTML with CSS applied', async (t) => {
 })
 
 // Nuxt サーバーをクローズする
-test.after('Closing server', (t) => {
+test.after('Closing server', t => {
   const { nuxt } = t.context
   nuxt.close()
 })
