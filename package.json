@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "nuxt": "^2.10.2"
+  },
+  "devDependencies": {
+    "@nuxt/typescript-build": "^0.3.2"
   }
 }
