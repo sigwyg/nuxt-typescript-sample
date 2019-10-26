@@ -15,6 +15,18 @@
       "test/**/*"
     ]
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+      "*.{js,ts,tsx,vue}": [
+          "eslint . --fix",
+          "prettier --write",
+          "git add"
+      ]
+  },
   "dependencies": {
     "nuxt": "^2.10.2"
   },
@@ -27,7 +39,9 @@
     "eslint-loader": "^3.0.2",
     "eslint-plugin-nuxt": "^0.4.3",
     "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
     "jsdom": "^15.2.0",
+    "lint-staged": "^9.4.2",
     "prettier": "^1.18.2"
   }
 }
