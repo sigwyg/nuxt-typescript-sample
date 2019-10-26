@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nuxt"
+    "dev": "nuxt",
+    "lint": "eslint --ext .ts,.js,.vue ."
   },
   "author": "sigwyg",
   "license": "ISC",
@@ -12,6 +13,8 @@
     "nuxt": "^2.10.2"
   },
   "devDependencies": {
-    "@nuxt/typescript-build": "^0.3.2"
+    "@nuxt/typescript-build": "^0.3.2",
+    "@nuxtjs/eslint-config-typescript": "^0.1.3",
+    "eslint": "^6.6.0"
   }
 }
