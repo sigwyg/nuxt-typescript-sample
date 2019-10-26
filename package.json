@@ -2,19 +2,27 @@
   "name": "vue-form-sample",
   "version": "1.0.0",
   "description": "",
+  "author": "sigwyg",
+  "license": "ISC",
   "main": "index.js",
   "scripts": {
     "dev": "nuxt",
-    "lint": "eslint --ext .ts,.js,.vue ."
+    "lint": "eslint --ext .ts,.js,.vue .",
+    "test": "ava"
   },
-  "author": "sigwyg",
-  "license": "ISC",
+  "ava": {
+    "files": [
+      "test/**/*"
+    ]
+  },
   "dependencies": {
     "nuxt": "^2.10.2"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.3.2",
     "@nuxtjs/eslint-config-typescript": "^0.1.3",
-    "eslint": "^6.6.0"
+    "ava": "^2.4.0",
+    "eslint": "^6.6.0",
+    "jsdom": "^15.2.0"
   }
 }

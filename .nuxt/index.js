@@ -10,6 +10,9 @@ import App from './App.js'
 import { setContext, getLocation, getRouteData, normalizeError } from './utils'
 
 /* Plugins */
+/* eslint-disable camelcase */
+
+/* eslint-enable camelcase */
 
 // Component: <ClientOnly>
 Vue.component(ClientOnly.name, ClientOnly)
@@ -20,7 +23,7 @@ Vue.component(NoSsr.name, {
   render (h, ctx) {
     if (process.client && !NoSsr._warned) {
       NoSsr._warned = true
-
+      // eslint-disable-next-line no-console
       console.warn(`<no-ssr> has been deprecated and will be removed in Nuxt 3, please use <client-only> instead`)
     }
     return NoSsr.render(h, ctx)
@@ -36,9 +39,9 @@ Vue.component('NChild', NuxtChild)
 // Component: <Nuxt>`
 Vue.component(Nuxt.name, Nuxt)
 
-Vue.use(Meta, {"keyName":"head","attribute":"data-n-head","ssrAttribute":"data-n-head-ssr","tagIDKeyName":"hid"})
+Vue.use(Meta, {"keyName":"head","attribute":"data-n-head","ssrAttribute":"data-n-head-ssr","tagIDKeyName":"hid"})// eslint-disable-line
 
-const defaultTransition = {"name":"page","mode":"out-in","appear":false,"appearClass":"appear","appearActiveClass":"appear-active","appearToClass":"appear-to"}
+const defaultTransition = {"name":"page","mode":"out-in","appear":false,"appearClass":"appear","appearActiveClass":"appear-active","appearToClass":"appear-to"}// eslint-disable-line
 
 async function createApp (ssrContext) {
   const router = await createRouter(ssrContext)
@@ -112,6 +115,9 @@ async function createApp (ssrContext) {
   })
 
   // Plugin execution
+  /* eslint-disable camelcase */
+
+  /* eslint-enable camelcase */
 
   // If server-side, wait for async component to be resolved first
   if (process.server && ssrContext && ssrContext.url) {
