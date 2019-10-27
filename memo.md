@@ -4,6 +4,9 @@
     - @nuxtjs/eslint-config-typescriptが必要
     - @nuxtjs/eslint-configと競合するので、あるなら消しておくこと
     - plugin:prettier/recommendedにはplogins: ['prettier']とか諸々含まれている
+    - 出たばっかなので見合わせたけど、落ち着いたらこの辺試すのも良いかも
+        - https://www.robertcooper.me/using-eslint-and-prettier-in-a-typescript-project
+    - SFCのLint対応(tsserver)はやっぱVim対応めんどくさい
 - Nuxt Typescript
     - https://typescript.nuxtjs.org/guide/
     - @nuxt/types

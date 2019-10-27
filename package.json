@@ -13,11 +13,6 @@
     "lint": "eslint --ext .ts,.js,.vue .",
     "test": "ava"
   },
-  "ava": {
-    "files": [
-      "test/**/*"
-    ]
-  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
