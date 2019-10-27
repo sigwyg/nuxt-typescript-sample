@@ -7,6 +7,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
     "lint": "eslint --ext .ts,.js,.vue .",
     "test": "ava"
   },
@@ -21,11 +24,11 @@
     }
   },
   "lint-staged": {
-      "*.{js,ts,tsx,vue}": [
-          "eslint . --fix",
-          "prettier --write",
-          "git add"
-      ]
+    "*.{js,ts,tsx,vue}": [
+      "eslint . --fix",
+      "prettier --write",
+      "git add"
+    ]
   },
   "dependencies": {
     "nuxt": "^2.10.2"
@@ -39,6 +42,7 @@
     "eslint-loader": "^3.0.2",
     "eslint-plugin-nuxt": "^0.4.3",
     "eslint-plugin-prettier": "^3.1.1",
+    "fork-ts-checker-webpack-plugin": "^2.0.0",
     "husky": "^3.0.9",
     "jsdom": "^15.2.0",
     "lint-staged": "^9.4.2",

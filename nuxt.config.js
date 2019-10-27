@@ -1,4 +1,9 @@
 export default {
+  typescript: {
+    typeCheck: {
+      eslint: true,
+    },
+  },
   buildModules: ['@nuxt/typescript-build'],
   build: {
     extend(config, ctx) {

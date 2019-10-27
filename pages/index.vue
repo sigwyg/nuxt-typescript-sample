@@ -1,14 +1,20 @@
 <template>
   <div>
     <h1>お問い合わせフォーム</h1>
-    <p>Hello {{ name }}!</p>
+    <p>Hello {{ message }}!</p>
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue'
+
+export default Vue.extend({
+  name: 'YourComponent',
+
   data() {
-    return { name: 'world' }
+    return {
+      message: 'This is a message',
+    }
   },
-}
+})
 </script>
