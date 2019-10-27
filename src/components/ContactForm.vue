@@ -2,62 +2,56 @@
   <form>
     <template v-if="formState === 1">
       <p>入力必須項目には「<strong class="required">必須</strong>」をつけていますので、必ず入力してください。</p>
-      <p>
-        原則３営業日以内にご返答いたします。ただし、お問い合わせ内容によっては、お時間をいただく場合やお答えできない場合があります。お電話にてご連絡させていただく場合もありますので、予めご了承ください。
-      </p>
 
       <fieldset>
         <legend>お問い合わせ内容</legend>
         <dl class="formGrid">
-          <dt>問い合わせ件名 <strong class="required">必須</strong></dt>
-          <dd><input type="text" name="" /></dd>
-          <dt>どの製品について</dt>
-          <dd>
-            <select>
-              <option value="">項目を選択してください</option>
-              <option value="a">Aサービスについて</option>
-              <option value="b">Bサービスについて</option>
-              <option value="c">Cサービスについて</option>
-              <option value="x">その他</option>
-            </select>
-          </dd>
-          <dt>問い合わせ内容 <strong class="required">必須</strong></dt>
-          <dd><textarea name="" rows="8"></textarea></dd>
+          <template v-for="(data, index) in formDataContent">
+            <div :key="index">
+              <dt>{{ data.label }} <strong v-if="data.required" class="required">必須</strong></dt>
+              <dd>
+                <!-- form elements -->
+                <select v-if="data.type === 'select'" :name="data.name">
+                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+                <textarea v-else-if="data.type === 'textarea'" :name="data.name" :model="data.value" rows="8" />
+                <input v-else :type="data.type" :name="data.name" :value="data.value" />
+              </dd>
+            </div>
+          </template>
         </dl>
       </fieldset>
 
       <fieldset>
         <legend>連絡先</legend>
         <dl class="formGrid">
-          <dt>名前(姓名) <strong class="required">必須</strong></dt>
-          <dd><input type="text" name="" /></dd>
-          <dt>ふりがな(姓名) <strong class="required">必須</strong></dt>
-          <dd><input type="text" name="" /></dd>
-          <dt>会社名</dt>
-          <dd><input type="text" name="" /></dd>
-          <dt>メールアドレス <strong class="required">必須</strong></dt>
-          <dd>
-            <input type="email" name="" />
-            <p role="note">
-              メールの受信拒否設定や迷惑メールフィルタリング機能により、弊社からのメールが受信できないことがあります。事前に「@xxx.com」からのメールを受信できるよう設定をお願いいたします。
-            </p>
-          </dd>
-          <dt>郵便番号</dt>
-          <dd>
-            <input type="number" name="zip1" />
-            -
-            <input type="number" name="zip2" />
-          </dd>
-          <dt>住所</dt>
-          <dd><input type="text" name="address" /></dd>
-          <dt>電話番号</dt>
-          <dd>
-            <input type="number" name="tel1" />
-            -
-            <input type="number" name="tel2" />
-            -
-            <input type="number" name="tel3" />
-          </dd>
+          <template v-for="(data, index) in formDataAddress">
+            <div :key="index">
+              <dt>{{ data.label }} <strong v-if="data.required" class="required">必須</strong></dt>
+              <dd>
+                <!-- form elements -->
+                <select v-if="data.type === 'select'" :name="data.name">
+                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+                <textarea v-else-if="data.type === 'textarea'" :name="data.name" :model="data.value" rows="8" />
+                <template v-else-if="data.type === 'number' && data.counts > 0">
+                  <template v-for="n of data.counts">
+                    <span :key="n" class="serialNumber">
+                      <input :type="data.type" :name="`${data.name}${n}`" :value="data.value" />
+                    </span>
+                  </template>
+                </template>
+                <input v-else :type="data.type" :name="data.name" :value="data.value" />
+                <p v-if="data.mailNote" role="note">
+                  メールの受信拒否設定や迷惑メールフィルタリング機能により、弊社からのメールが受信できないことがあります。事前に「@xxx.com」からのメールを受信できるよう設定をお願いいたします。
+                </p>
+              </dd>
+            </div>
+          </template>
         </dl>
       </fieldset>
       <p class="agreeBox">
@@ -80,6 +74,9 @@
     </template>
     <template v-else>
       <p>お問い合わせありがとうございました。</p>
+      <p>
+        原則３営業日以内にご返答いたします。ただし、お問い合わせ内容によっては、お時間をいただく場合やお答えできない場合があります。お電話にてご連絡させていただく場合もありますので、予めご了承ください。
+      </p>
     </template>
   </form>
 </template>
@@ -87,11 +84,127 @@
 <script lang="ts">
 import Vue from 'vue'
 
+enum FormTypes {
+  text,
+  email,
+  number,
+  select,
+  checkbox,
+  radio,
+  textarea,
+}
+
+interface FormOptions {
+  value: string
+  label: string
+}
+
+interface FormData {
+  label: string
+  required: boolean
+  type: keyof typeof FormTypes
+  value: string
+  name: string
+  options?: FormOptions[]
+  mailNote?: boolean
+  counts?: number
+}
+
+interface ContactFormData {
+  formState: number
+  formDataContent: FormData[]
+  formDataAddress: FormData[]
+}
+
 export default Vue.extend({
   name: 'ContactForm',
-  data() {
+  data(): ContactFormData {
     return {
       formState: 1,
+      formDataContent: [
+        {
+          label: '問い合わせ件名',
+          required: true,
+          type: 'text',
+          name: 'title',
+          value: '',
+        },
+        {
+          label: 'どの製品について',
+          required: false,
+          type: 'select',
+          name: 'target',
+          value: '',
+          options: [
+            { value: '', label: '項目を選択してください' },
+            { value: 'a', label: 'Aサービスについて' },
+            { value: 'b', label: 'Bサービスについて' },
+            { value: 'c', label: 'Cサービスについて' },
+            { value: 'x', label: 'その他' },
+          ],
+        },
+        {
+          label: '問い合わせ内容',
+          required: true,
+          type: 'textarea',
+          name: 'content',
+          value: '',
+        },
+      ],
+      formDataAddress: [
+        {
+          label: '名前(姓名) ',
+          required: true,
+          type: 'text',
+          name: 'fullname',
+          value: '',
+        },
+        {
+          label: 'ふりがな(姓名) ',
+          required: true,
+          type: 'text',
+          name: 'fullname_kana',
+          value: '',
+        },
+        {
+          label: '会社名',
+          required: false,
+          type: 'text',
+          name: 'company',
+          value: '',
+        },
+        {
+          label: 'メールアドレス',
+          required: true,
+          type: 'email',
+          name: 'email',
+          value: '',
+          mailNote: true,
+        },
+        {
+          label: '郵便番号',
+          required: false,
+          type: 'number',
+          name: 'zip',
+          value: '',
+          counts: 2,
+        },
+        {
+          label: '住所',
+          required: false,
+          type: 'text',
+          name: 'address',
+          value: '',
+        },
+        {
+          label: '電話番号',
+          required: false,
+          type: 'number',
+          name: 'tel',
+          value: '',
+          counts: 3,
+        },
+      ],
     }
   },
   methods: {
@@ -140,9 +253,12 @@ p[role='note'] {
 }
 
 .formGrid {
-  display: grid;
-  grid-template-columns: 10em 1fr;
   border-top: 1px solid $--color-lightgray;
+
+  & > div {
+    display: grid;
+    grid-template-columns: 10em 1fr;
+  }
 
   & dt {
     border-bottom: 1px solid $--color-lightgray;
@@ -157,8 +273,11 @@ p[role='note'] {
   }
 
   @media (max-width: 414px) {
-    grid-template-columns: 1fr;
     border-top: 0;
+
+    & > div {
+      grid-template-columns: 1fr;
+    }
 
     & dt {
       border-top: 1px solid $--color-lightgray;
@@ -206,6 +325,18 @@ input[type='number'] {
 
   &:focus {
     background-color: $--color-white;
+  }
+}
+
+.serialNumber {
+  &::after {
+    content: '-';
+    display: inline-block;
+    padding: 0 5px;
+  }
+
+  &:last-of-type::after {
+    content: '';
   }
 }
 
