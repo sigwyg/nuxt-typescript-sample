@@ -9,6 +9,7 @@ test.before('Init Nuxt.js', async t => {
   try {
     config = require(resolve(rootDir, 'nuxt.config.js'))
   } catch (e) {
+    // ToDo: ここで落ちてるっぽい
     console.log(e)
   }
   config.rootDir = rootDir // project folder
