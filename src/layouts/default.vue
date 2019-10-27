@@ -24,12 +24,14 @@
 
 main[role='main'] {
   flex-grow: 1;
+  background: $--color-white;
 }
 
 .st-header {
   padding: 1em;
   border-bottom: 1px solid $--color-lightgray;
   text-align: center;
+  background: $--color-white;
 }
 
 .st-logo {
