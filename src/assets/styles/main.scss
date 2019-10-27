@@ -19,3 +19,14 @@ body {
 a {
   color: $--color-primary;
 }
+
+.c-button {
+  background-color: $--color-primary;
+  color: $--color-white;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+
+  &.--gray {
+    background-color: $--color-gray;
+  }
+}
