@@ -5,10 +5,11 @@ module.exports = {
     'plugin:vue/recommended',
     'plugin:nuxt/recommended',
     'plugin:prettier/recommended',
-    'prettier/vue'
+    'prettier/vue',
   ],
   plugins: ['vue'],
   rules: {
     'no-console': 'off',
-  }
+    'prettier/prettier': ['warn'],
+  },
 }

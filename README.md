@@ -9,7 +9,10 @@ Nuxt.js初めてなので勉強しつつ。
     - plugin:prettier/recommendedにはplogins: ['prettier']とか諸々含まれている
     - 出たばっかなので見合わせたけど、落ち着いたらこの辺試すのも良いかも
         - https://www.robertcooper.me/using-eslint-and-prettier-in-a-typescript-project
-    - SFCのLint対応(tsserver)はやっぱVim対応めんどくさい
+    - vue SFCのLint対応はめんどくさい(tsserver, prettier)
+        - インデントscriptが2で、template/styleは4にしたいんだが… vueファイルだと難しい
+        - エディタ対応は上手いことできるんだけど、ランタイムで落ちる。ぐぬぬ
+        - 話題としてはこの辺も近いが -> https://github.com/prettier/prettier/issues/3888
 - Nuxt Typescript
     - https://typescript.nuxtjs.org/guide/
     - @nuxt/types
