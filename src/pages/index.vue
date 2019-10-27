@@ -1,7 +1,6 @@
 <template>
-  <div>
+  <div class="contactWrapper">
     <h1>お問い合わせフォーム</h1>
-    <p>Hello {{ message }}!</p>
     <ContactForm />
   </div>
 </template>
@@ -16,11 +15,22 @@ export default Vue.extend({
   components: {
     ContactForm,
   },
-
-  data() {
-    return {
-      message: 'This is a message',
-    }
-  },
 })
 </script>
+
+<style lang="scss" scoped>
+h1 {
+  font-size: 30px;
+  text-align: center;
+}
+
+.contactWrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2em 0;
+
+  @media (max-width: 414px) {
+    padding: 0;
+  }
+}
+</style>

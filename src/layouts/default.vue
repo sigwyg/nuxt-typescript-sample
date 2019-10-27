@@ -23,6 +23,7 @@
 }
 
 main[role='main'] {
+  padding: 0 1em 2em;
   flex-grow: 1;
   background: $--color-white;
 }

@@ -25,8 +25,13 @@ a {
   color: $--color-white;
   padding: 0.5em 1em;
   border-radius: 4px;
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
 
   &.--gray {
     background-color: $--color-gray;
   }
+}
+
+.u-alignCenter {
+  text-align: center;
 }
