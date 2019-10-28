@@ -3,6 +3,9 @@ Nuxt.js初めてなので勉強しつつ。
 
 # 学び
 
+- test
+    - 公式通りのAVA設定
+    - 動いてるけど、nuxt.configのtry/catchでエラー吐いてるような…
 - Lint
     - @nuxtjs/eslint-config-typescriptが必要
     - @nuxtjs/eslint-configと競合するので、あるなら消しておくこと
