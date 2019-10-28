@@ -11,13 +11,13 @@
               <dt>{{ data.label }} <strong v-if="data.required" class="required">必須</strong></dt>
               <dd>
                 <!-- form elements -->
-                <select v-if="data.type === 'select'" :name="data.name">
+                <select v-if="data.type === 'select'" v-model="data.value" :name="data.name">
                   <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
-                    {{ option.label }}
+                    {{ option.text }}
                   </option>
                 </select>
-                <textarea v-else-if="data.type === 'textarea'" :name="data.name" :model="data.value" rows="8" />
-                <input v-else :type="data.type" :name="data.name" :value="data.value" />
+                <textarea v-else-if="data.type === 'textarea'" v-model="data.value" :name="data.name" rows="8" />
+                <input v-else v-model="data.value" :type="data.type" :name="data.name" />
               </dd>
             </div>
           </template>
@@ -32,20 +32,20 @@
               <dt>{{ data.label }} <strong v-if="data.required" class="required">必須</strong></dt>
               <dd>
                 <!-- form elements -->
-                <select v-if="data.type === 'select'" :name="data.name">
+                <select v-if="data.type === 'select'" v-model="data.value" :name="data.name">
                   <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
-                    {{ option.label }}
+                    {{ option.text }}
                   </option>
                 </select>
-                <textarea v-else-if="data.type === 'textarea'" :name="data.name" :model="data.value" rows="8" />
+                <textarea v-else-if="data.type === 'textarea'" v-model="data.value" :name="data.name" rows="8" />
                 <template v-else-if="data.type === 'number' && data.counts > 0">
                   <template v-for="n of data.counts">
                     <span :key="n" class="serialNumber">
-                      <input :type="data.type" :name="`${data.name}${n}`" :value="data.value" />
+                      <input v-model="data.value" :type="data.type" :name="`${data.name}${n}`" />
                     </span>
                   </template>
                 </template>
-                <input v-else :type="data.type" :name="data.name" :value="data.value" />
+                <input v-else v-model="data.value" :type="data.type" :name="data.name" />
                 <p v-if="data.mailNote" role="note">
                   メールの受信拒否設定や迷惑メールフィルタリング機能により、弊社からのメールが受信できないことがあります。事前に「@xxx.com」からのメールを受信できるよう設定をお願いいたします。
                 </p>
@@ -63,10 +63,32 @@
       </div>
     </template>
     <template v-else-if="formState === 2">
-      <dl class="formGrid">
-        <dt>data</dt>
-        <dd>data</dd>
-      </dl>
+      <!-- output data -->
+      <fieldset>
+        <legend>入力内容</legend>
+        <dl class="formGrid">
+          <template v-for="(data, index) in [...formDataContent, ...formDataAddress]">
+            <div v-if="data.value" :key="index">
+              <dt>{{ data.label }}</dt>
+              <dd>
+                <template v-if="data.type === 'select'">
+                  {{ data.selected }}
+                </template>
+                <template v-else-if="data.type === 'number' && data.counts > 0">
+                  <template v-for="n of data.counts">
+                    <span :key="n" class="serialNumber">
+                      {{ data.value }}
+                    </span>
+                  </template>
+                </template>
+                <template v-else>
+                  <div style="white-space: pre-line;">{{ data.value }}</div>
+                </template>
+              </dd>
+            </div>
+          </template>
+        </dl>
+      </fieldset>
       <div class="buttonWrapper">
         <button type="button" class="c-button --gray" @click="toForm">戻る(編集する)</button>
         <button type="button" class="c-button" @click="toSend">この内容で送信する</button>
@@ -96,7 +118,7 @@ enum FormTypes {
 
 interface FormOptions {
   value: string
-  label: string
+  text: string
 }
 
 interface FormData {
@@ -136,11 +158,11 @@ export default Vue.extend({
           name: 'target',
           value: '',
           options: [
-            { value: '', label: '項目を選択してください' },
-            { value: 'a', label: 'Aサービスについて' },
-            { value: 'b', label: 'Bサービスについて' },
-            { value: 'c', label: 'Cサービスについて' },
-            { value: 'x', label: 'その他' },
+            { value: '', text: '項目を選択してください' },
+            { value: 'a', text: 'Aサービスについて' },
+            { value: 'b', text: 'Bサービスについて' },
+            { value: 'c', text: 'Cサービスについて' },
+            { value: 'x', text: 'その他' },
           ],
         },
         {
