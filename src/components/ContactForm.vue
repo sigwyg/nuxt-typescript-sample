@@ -5,8 +5,10 @@
 
       <ul v-if="errors.length > 0">
         <li v-for="(data, index) in errors" :key="index">
-          <span v-if="data.errorType === 'required'">『{{ data.label }}』を入力してください</span>
+          <span v-if="data.errorType === 'agree'">『{{ data.label }}』への同意をお願いいたします</span>
+          <span v-else-if="data.errorType === 'required'">『{{ data.label }}』を入力してください</span>
           <span v-else-if="data.errorType === 'email'">『{{ data.label }}』のEmail形式が間違っています</span>
+          <span v-else-if="data.errorType === 'number'">『{{ data.label }}』は半角数字で入力してください</span>
           <span v-else-if="data.errorType === 'maxnumber'">『{{ data.label }}』の文字数が多すぎます</span>
           <span v-else>『{{ data.label }}』に何かエラーがあります</span>
         </li>
@@ -104,7 +106,9 @@
         </dl>
       </fieldset>
       <p class="agreeBox">
-        <label><input type="checkbox" name="agreement" /> <a href="">個人情報の保持</a>に同意する</label>
+        <label
+          ><input ref="agreement" type="checkbox" name="agreement" /> <a href="">個人情報の保持</a>に同意する</label
+        >
         <strong class="required">必須</strong>
       </p>
       <div class="buttonWrapper --single">
@@ -143,8 +147,10 @@ enum FormTypes {
 
 enum errorType {
   'required',
+  'number',
   'maxnumber',
   'email',
+  'agree',
 }
 
 interface Error {
@@ -314,6 +320,17 @@ export default Vue.extend({
       this.errors = []
       const data = [...this.formDataContent, ...this.formDataAddress]
 
+      // check agreement
+      const agreement = this.$refs.agreement
+      if (!agreement.checked) {
+        this.errors.push({
+          name: 'agreement',
+          label: '個人情報の保持',
+          hasError: true,
+          errorType: 'agree',
+        })
+      }
+
       // check required
       const required = data.filter(item => item.required === true && item.value === '')
       if (required.length > 0) this.setErrors(required, 'required')
@@ -323,6 +340,13 @@ export default Vue.extend({
       const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
       const email = data.filter(item => item.type === 'email' && !emailRegex.test(item.value))
       if (email.length > 0) this.setErrors(email, 'email')
+
+      // check number
+      const numberRegex = /^[0-9]+$/
+      const isNumber = data.filter(item => {
+        return item.type === 'serialNumber' && item.value && !numberRegex.test(item.value)
+      })
+      if (isNumber.length > 0) this.setErrors(isNumber, 'number')
 
       // check max-number
       const number = data.filter(item => {
@@ -338,7 +362,7 @@ export default Vue.extend({
      * @param {FormData}
      */
     setErrors(data: FormData[], type: string): void {
-      if (type === 'maxnumber') console.log(data, data.name, data.label)
+      if (type === 'number') console.log(data)
       data.forEach(item => {
         this.errors.push({
           name: item.name,
