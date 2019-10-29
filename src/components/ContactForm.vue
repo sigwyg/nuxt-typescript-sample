@@ -232,6 +232,7 @@ export default Vue.extend({
     },
     toSend(): void {
       this.formState = 3
+      console.log(this.formDataContent, this.formDataAddress)
     },
   },
 })
