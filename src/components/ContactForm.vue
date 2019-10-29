@@ -38,10 +38,10 @@
                   </option>
                 </select>
                 <textarea v-else-if="data.type === 'textarea'" v-model="data.value" :name="data.name" rows="8" />
-                <template v-else-if="data.type === 'number' && data.counts > 0">
-                  <template v-for="n of data.counts">
-                    <span :key="n" class="serialNumber">
-                      <input v-model="data.value" :type="data.type" :name="`${data.name}${n}`" />
+                <template v-else-if="data.type === 'serialNumber' && data.options.length > 0">
+                  <template v-for="(option, idx) in data.options">
+                    <span :key="idx" class="serialNumber">
+                      <input v-model="option.value" :name="option.name" type="number" />
                     </span>
                   </template>
                 </template>
@@ -74,10 +74,10 @@
                 <template v-if="data.type === 'select'">
                   {{ data.selected }}
                 </template>
-                <template v-else-if="data.type === 'number' && data.counts > 0">
-                  <template v-for="n of data.counts">
-                    <span :key="n" class="serialNumber">
-                      {{ data.value }}
+                <template v-else-if="data.type === 'serialNumber' && data.options.length > 0">
+                  <template v-for="(option, idx) in data.options">
+                    <span :key="idx" class="serialNumber">
+                      {{ option.value }}
                     </span>
                   </template>
                 </template>
@@ -118,7 +118,8 @@ enum FormTypes {
 
 interface FormOptions {
   value: string
-  text: string
+  text?: string
+  name?: string
 }
 
 interface FormData {
@@ -129,7 +130,6 @@ interface FormData {
   name: string
   options?: FormOptions[]
   mailNote?: boolean
-  counts?: number
 }
 
 interface ContactFormData {
@@ -206,10 +206,10 @@ export default Vue.extend({
         {
           label: '郵便番号',
           required: false,
-          type: 'number',
+          type: 'serialNumber',
           name: 'zip',
           value: '',
-          counts: 2,
+          options: [{ name: 'zip1', value: '' }, { name: 'zip2', value: '' }],
         },
         {
           label: '住所',
@@ -221,10 +221,10 @@ export default Vue.extend({
         {
           label: '電話番号',
           required: false,
-          type: 'number',
+          type: 'serialNumber',
           name: 'tel',
           value: '',
-          counts: 3,
+          options: [{ name: 'tel1', value: '' }, { name: 'tel2', value: '' }, { name: 'tel3', value: '' }],
         },
       ],
     }
