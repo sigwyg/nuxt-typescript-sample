@@ -64,31 +64,7 @@
     </template>
     <template v-else-if="formState === 2">
       <!-- output data -->
-      <fieldset>
-        <legend>入力内容</legend>
-        <dl class="formGrid">
-          <template v-for="(data, index) in [...formDataContent, ...formDataAddress]">
-            <div v-if="data.value" :key="index">
-              <dt>{{ data.label }}</dt>
-              <dd>
-                <template v-if="data.type === 'select'">
-                  {{ getOptionText(data) }}
-                </template>
-                <template v-else-if="data.type === 'serialNumber' && data.options.length > 0">
-                  <template v-for="(option, idx) in data.options">
-                    <span :key="idx" class="serialNumber">
-                      {{ option.value }}
-                    </span>
-                  </template>
-                </template>
-                <template v-else>
-                  <div style="white-space: pre-line;">{{ data.value }}</div>
-                </template>
-              </dd>
-            </div>
-          </template>
-        </dl>
-      </fieldset>
+      <ContactConfirm :form-data="[...formDataContent, ...formDataAddress]" />
       <div class="buttonWrapper">
         <button type="button" class="c-button --gray" @click="toForm">戻る(編集する)</button>
         <button type="button" class="c-button" @click="toSend">この内容で送信する</button>
@@ -102,7 +78,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import ContactSend from '@/components/ContactSend'
+import ContactConfirm from '@/components/ContactConfirm.vue'
+import ContactSend from '@/components/ContactSend.vue'
 
 enum FormTypes {
   text,
@@ -112,6 +89,7 @@ enum FormTypes {
   checkbox,
   radio,
   textarea,
+  serialNumber,
 }
 
 interface FormOptions {
@@ -139,6 +117,7 @@ interface ContactFormData {
 export default Vue.extend({
   name: 'ContactForm',
   components: {
+    ContactConfirm,
     ContactSend,
   },
   data(): ContactFormData {
@@ -232,13 +211,6 @@ export default Vue.extend({
   },
   methods: {
     /**
-     * @return {string}
-     */
-    getOptionText(data: FormData): string {
-      const option = data.options.find(option => option.value === data.value)
-      return option.text
-    },
-    /**
      * form change
      */
     toConfirm() {
@@ -254,7 +226,7 @@ export default Vue.extend({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import '@/assets/styles/main.scss';
 
 fieldset {
