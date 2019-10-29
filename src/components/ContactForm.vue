@@ -41,7 +41,7 @@
                 <template v-else-if="data.type === 'serialNumber' && data.options.length > 0">
                   <template v-for="(option, idx) in data.options">
                     <span :key="idx" class="serialNumber">
-                      <input v-model="option.value" :name="option.name" type="number" />
+                      <input v-model="option.value" :name="option.name" type="number" @change="setNumber(data)" />
                     </span>
                   </template>
                 </template>
@@ -211,15 +211,26 @@ export default Vue.extend({
   },
   methods: {
     /**
+     * 一連の数値を結合して、valueにする。
+     * イメージは「tel1 + tel2 + tel3 = tel」
+     * @param {formData} type: serialNumberのObject
+     */
+    setNumber(data: FormData): void {
+      if (!data || !data.options) return
+      const optionValues: Array<string> = data.options.map(item => item.value)
+      data.value = optionValues.join('')
+    },
+
+    /**
      * form change
      */
-    toConfirm() {
+    toConfirm(): void {
       this.formState = 2
     },
-    toForm() {
+    toForm(): void {
       this.formState = 1
     },
-    toSend() {
+    toSend(): void {
       this.formState = 3
     },
   },
