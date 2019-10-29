@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form action="" method="post">
     <template v-if="formState === 1">
       <p>入力必須項目には「<strong class="required">必須</strong>」をつけていますので、必ず入力してください。</p>
 
@@ -295,43 +295,56 @@ export default Vue.extend({
     },
     toSend(): void {
       this.formState = 3
-      console.log(this.formDataContent, this.formDataAddress)
+      // fetch or form.submit()
+      console.log([...this.formDataContent, ...this.formDataAddress])
     },
 
     /**
      * validation
      * @return {boolean} trueでOK. falseでerror
      */
-    checkData() {
+    checkData(): boolean {
       // initialized
       this.errors = []
+      const data = [...this.formDataContent, ...this.formDataAddress]
 
       // check required
-      const data = [...this.formDataContent, ...this.formDataAddress]
       const required = data.filter(item => item.required === true && item.value === '')
+      this.setErrors(required, 'required')
 
-      // push to errors
-      required.forEach(item => {
-        console.log(item.name)
-        this.errors.push({
-          name: item.name,
-          label: item.label,
-          hasError: true,
-          errorType: 'required',
-        })
-      })
+      // check email
+      // - https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type=email)
+      const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      const email = data.filter(item => item.type === 'email' && !emailRegex.test(item.value))
+      this.setErrors(email, 'email')
 
       // stop submit
       return this.errors.length < 1
     },
+
+    /**
+     * @param {formData}
+     */
+    setErrors(data: formData[], type: string): void {
+      if (type === 'email') console.log(data.name, data.label)
+      data.forEach(item => {
+        this.errors.push({
+          name: item.name,
+          label: item.label,
+          hasError: true,
+          errorType: type,
+        })
+      })
+    },
+
     /**
      * @param {formData}
      * @return {boolean}
      */
-    checkError(data) {
+    checkError(data: formData): boolean {
       return this.errors.find(item => item.name === data.name)
     },
-    checkValid(data) {
+    checkValid(data: formData): boolean {
       return this.errors.find(item => item.name === data.name && item.isValid === true)
     },
   },

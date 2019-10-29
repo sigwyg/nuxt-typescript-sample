@@ -20,6 +20,7 @@
   justify-content: space-between;
   flex-direction: column;
   height: 100vh;
+  overflow: auto;
 }
 
 main[role='main'] {
