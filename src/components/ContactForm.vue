@@ -3,6 +3,15 @@
     <template v-if="formState === 1">
       <p>入力必須項目には「<strong class="required">必須</strong>」をつけていますので、必ず入力してください。</p>
 
+      <ul v-if="errors.length > 0">
+        <li v-for="(data, index) in errors" :key="index">
+          <span v-if="data.errorType === 'required'">『{{ data.label }}』を入力してください</span>
+          <span v-else-if="data.errorType === 'email'">『{{ data.label }}』のEmail形式が間違っています</span>
+          <span v-else-if="data.errorType === 'maxNumber'">『{{ data.label }}』の文字数が多すぎます</span>
+          <span v-else>『{{ data.label }}』に何かエラーがあります</span>
+        </li>
+      </ul>
+
       <fieldset>
         <legend>お問い合わせ内容</legend>
         <dl class="formGrid">
@@ -11,13 +20,30 @@
               <dt>{{ data.label }} <strong v-if="data.required" class="required">必須</strong></dt>
               <dd>
                 <!-- form elements -->
-                <select v-if="data.type === 'select'" v-model="data.value" :name="data.name">
+                <select
+                  v-if="data.type === 'select'"
+                  v-model="data.value"
+                  :name="data.name"
+                  :class="{ hasError: checkError(data), isValid: checkValid(data) }"
+                >
                   <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
                     {{ option.text }}
                   </option>
                 </select>
-                <textarea v-else-if="data.type === 'textarea'" v-model="data.value" :name="data.name" rows="8" />
-                <input v-else v-model="data.value" :type="data.type" :name="data.name" />
+                <textarea
+                  v-else-if="data.type === 'textarea'"
+                  v-model="data.value"
+                  :name="data.name"
+                  :class="{ hasError: checkError(data), isValid: checkValid(data) }"
+                  rows="8"
+                />
+                <input
+                  v-else
+                  v-model="data.value"
+                  :type="data.type"
+                  :name="data.name"
+                  :class="{ hasError: checkError(data), isValid: checkValid(data) }"
+                />
               </dd>
             </div>
           </template>
@@ -32,12 +58,23 @@
               <dt>{{ data.label }} <strong v-if="data.required" class="required">必須</strong></dt>
               <dd>
                 <!-- form elements -->
-                <select v-if="data.type === 'select'" v-model="data.value" :name="data.name">
+                <select
+                  v-if="data.type === 'select'"
+                  v-model="data.value"
+                  :name="data.name"
+                  :class="{ hasError: checkError(data), isValid: checkValid(data) }"
+                >
                   <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
                     {{ option.text }}
                   </option>
                 </select>
-                <textarea v-else-if="data.type === 'textarea'" v-model="data.value" :name="data.name" rows="8" />
+                <textarea
+                  v-else-if="data.type === 'textarea'"
+                  v-model="data.value"
+                  :name="data.name"
+                  :class="{ hasError: checkError(data), isValid: checkValid(data) }"
+                  rows="8"
+                />
                 <template v-else-if="data.type === 'serialNumber' && data.options.length > 0">
                   <template v-for="(option, idx) in data.options">
                     <span :key="idx" class="serialNumber">
@@ -45,7 +82,13 @@
                     </span>
                   </template>
                 </template>
-                <input v-else v-model="data.value" :type="data.type" :name="data.name" />
+                <input
+                  v-else
+                  v-model="data.value"
+                  :type="data.type"
+                  :name="data.name"
+                  :class="{ hasError: checkError(data), isValid: checkValid(data) }"
+                />
                 <p v-if="data.mailNote" role="note">
                   メールの受信拒否設定や迷惑メールフィルタリング機能により、弊社からのメールが受信できないことがあります。事前に「@xxx.com」からのメールを受信できるよう設定をお願いいたします。
                 </p>
@@ -92,6 +135,19 @@ enum FormTypes {
   serialNumber,
 }
 
+enum errorType {
+  'required',
+  'maxnumber',
+  'email',
+}
+
+interface Error {
+  name: string
+  label: string
+  hasError: boolean
+  errorType: keyof typeof errorType
+}
+
 interface FormOptions {
   value: string
   text?: string
@@ -110,6 +166,7 @@ interface FormData {
 
 interface ContactFormData {
   formState: number
+  errors: Error[]
   formDataContent: FormData[]
   formDataAddress: FormData[]
 }
@@ -123,6 +180,7 @@ export default Vue.extend({
   data(): ContactFormData {
     return {
       formState: 1,
+      errors: [],
       formDataContent: [
         {
           label: '問い合わせ件名',
@@ -225,7 +283,12 @@ export default Vue.extend({
      * form change
      */
     toConfirm(): void {
-      this.formState = 2
+      if (this.checkData()) {
+        this.formState = 2
+      } else {
+        // errorがあったら先頭に戻る（エラーボックス見させる）
+        window.scrollTo(0, 0)
+      }
     },
     toForm(): void {
       this.formState = 1
@@ -233,6 +296,43 @@ export default Vue.extend({
     toSend(): void {
       this.formState = 3
       console.log(this.formDataContent, this.formDataAddress)
+    },
+
+    /**
+     * validation
+     * @return {boolean} trueでOK. falseでerror
+     */
+    checkData() {
+      // initialized
+      this.errors = []
+
+      // check required
+      const data = [...this.formDataContent, ...this.formDataAddress]
+      const required = data.filter(item => item.required === true && item.value === '')
+
+      // push to errors
+      required.forEach(item => {
+        console.log(item.name)
+        this.errors.push({
+          name: item.name,
+          label: item.label,
+          hasError: true,
+          errorType: 'required',
+        })
+      })
+
+      // stop submit
+      return this.errors.length < 1
+    },
+    /**
+     * @param {formData}
+     * @return {boolean}
+     */
+    checkError(data) {
+      return this.errors.find(item => item.name === data.name)
+    },
+    checkValid(data) {
+      return this.errors.find(item => item.name === data.name && item.isValid === true)
     },
   },
 })
@@ -331,6 +431,14 @@ textarea {
   &:focus {
     background-color: $--color-white;
   }
+
+  &.hasError {
+    border: 2px solid red;
+  }
+
+  &.isValid {
+    border: 2px solid green;
+  }
 }
 
 input[type='number'] {
@@ -342,6 +450,14 @@ input[type='number'] {
 
   &:focus {
     background-color: $--color-white;
+  }
+
+  &.hasError {
+    border-color: red;
+  }
+
+  &.isValid {
+    border-color: green;
   }
 }
 
