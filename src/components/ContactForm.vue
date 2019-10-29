@@ -72,7 +72,7 @@
               <dt>{{ data.label }}</dt>
               <dd>
                 <template v-if="data.type === 'select'">
-                  {{ data.selected }}
+                  {{ getOptionText(data) }}
                 </template>
                 <template v-else-if="data.type === 'serialNumber' && data.options.length > 0">
                   <template v-for="(option, idx) in data.options">
@@ -230,6 +230,16 @@ export default Vue.extend({
     }
   },
   methods: {
+    /**
+     * @return {string}
+     */
+    getOptionText(data: FormData): string {
+      const option = data.options.find(option => option.value === data.value)
+      return option.text
+    },
+    /**
+     * form change
+     */
     toConfirm() {
       this.formState = 2
     },
