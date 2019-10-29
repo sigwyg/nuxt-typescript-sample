@@ -7,7 +7,7 @@
         <li v-for="(data, index) in errors" :key="index">
           <span v-if="data.errorType === 'required'">『{{ data.label }}』を入力してください</span>
           <span v-else-if="data.errorType === 'email'">『{{ data.label }}』のEmail形式が間違っています</span>
-          <span v-else-if="data.errorType === 'maxNumber'">『{{ data.label }}』の文字数が多すぎます</span>
+          <span v-else-if="data.errorType === 'maxnumber'">『{{ data.label }}』の文字数が多すぎます</span>
           <span v-else>『{{ data.label }}』に何かエラーがあります</span>
         </li>
       </ul>
@@ -78,7 +78,13 @@
                 <template v-else-if="data.type === 'serialNumber' && data.options.length > 0">
                   <template v-for="(option, idx) in data.options">
                     <span :key="idx" class="serialNumber">
-                      <input v-model="option.value" :name="option.name" type="number" @change="setNumber(data)" />
+                      <input
+                        v-model="option.value"
+                        :name="option.name"
+                        type="number"
+                        :class="{ hasError: checkError(data), isValid: checkValid(data) }"
+                        @change="setNumber(data)"
+                      />
                     </span>
                   </template>
                 </template>
@@ -310,23 +316,29 @@ export default Vue.extend({
 
       // check required
       const required = data.filter(item => item.required === true && item.value === '')
-      this.setErrors(required, 'required')
+      if (required.length > 0) this.setErrors(required, 'required')
 
       // check email
       // - https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type=email)
       const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
       const email = data.filter(item => item.type === 'email' && !emailRegex.test(item.value))
-      this.setErrors(email, 'email')
+      if (email.length > 0) this.setErrors(email, 'email')
+
+      // check max-number
+      const number = data.filter(item => {
+        return item.type === 'serialNumber' && !item.options.every(elm => elm.value.length <= 4)
+      })
+      if (number.length > 0) this.setErrors(number, 'maxnumber')
 
       // stop submit
       return this.errors.length < 1
     },
 
     /**
-     * @param {formData}
+     * @param {FormData}
      */
-    setErrors(data: formData[], type: string): void {
-      if (type === 'email') console.log(data.name, data.label)
+    setErrors(data: FormData[], type: string): void {
+      if (type === 'maxnumber') console.log(data, data.name, data.label)
       data.forEach(item => {
         this.errors.push({
           name: item.name,
@@ -338,14 +350,16 @@ export default Vue.extend({
     },
 
     /**
-     * @param {formData}
+     * @param {FormData}
      * @return {boolean}
      */
-    checkError(data: formData): boolean {
-      return this.errors.find(item => item.name === data.name)
+    checkError(data: FormData): boolean {
+      const error = this.errors.findIndex(item => item.name === data.name)
+      return error > 0
     },
-    checkValid(data: formData): boolean {
-      return this.errors.find(item => item.name === data.name && item.isValid === true)
+    checkValid(data: FormData): boolean {
+      const error = this.errors.includes(item => item.name === data.name && item.isValid === true)
+      return error > 0
     },
   },
 })
@@ -466,11 +480,11 @@ input[type='number'] {
   }
 
   &.hasError {
-    border-color: red;
+    border: 2px solid red;
   }
 
   &.isValid {
-    border-color: green;
+    border: 2px solid green;
   }
 }
 
