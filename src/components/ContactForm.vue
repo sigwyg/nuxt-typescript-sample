@@ -1,7 +1,10 @@
 <template>
-  <form action="" method="post">
+  <form action method="post">
     <template v-if="formState === 1">
-      <p>入力必須項目には「<strong class="required">必須</strong>」をつけていますので、必ず入力してください。</p>
+      <p>
+        入力必須項目には「
+        <strong class="required">必須</strong>」をつけていますので、必ず入力してください。
+      </p>
 
       <ul v-if="errors.length > 0">
         <li v-for="(data, index) in errors" :key="index">
@@ -19,7 +22,10 @@
         <dl class="formGrid">
           <template v-for="(data, index) in formDataContent">
             <div :key="index">
-              <dt>{{ data.label }} <strong v-if="data.required" class="required">必須</strong></dt>
+              <dt>
+                {{ data.label }}
+                <strong v-if="data.required" class="required">必須</strong>
+              </dt>
               <dd>
                 <!-- form elements -->
                 <select
@@ -28,9 +34,9 @@
                   :name="data.name"
                   :class="{ hasError: checkError(data), isValid: checkValid(data) }"
                 >
-                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
-                    {{ option.text }}
-                  </option>
+                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">{{
+                    option.text
+                  }}</option>
                 </select>
                 <textarea
                   v-else-if="data.type === 'textarea'"
@@ -57,7 +63,10 @@
         <dl class="formGrid">
           <template v-for="(data, index) in formDataAddress">
             <div :key="index">
-              <dt>{{ data.label }} <strong v-if="data.required" class="required">必須</strong></dt>
+              <dt>
+                {{ data.label }}
+                <strong v-if="data.required" class="required">必須</strong>
+              </dt>
               <dd>
                 <!-- form elements -->
                 <select
@@ -66,9 +75,9 @@
                   :name="data.name"
                   :class="{ hasError: checkError(data), isValid: checkValid(data) }"
                 >
-                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
-                    {{ option.text }}
-                  </option>
+                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">{{
+                    option.text
+                  }}</option>
                 </select>
                 <textarea
                   v-else-if="data.type === 'textarea'"
@@ -106,9 +115,10 @@
         </dl>
       </fieldset>
       <p class="agreeBox">
-        <label
-          ><input ref="agreement" type="checkbox" name="agreement" /> <a href="">個人情報の保持</a>に同意する</label
-        >
+        <label>
+          <input ref="agreement" type="checkbox" name="agreement" />
+          <a href>個人情報の保持</a>に同意する
+        </label>
         <strong class="required">必須</strong>
       </p>
       <div class="buttonWrapper --single">
@@ -146,18 +156,18 @@ enum FormTypes {
 }
 
 enum errorType {
-  'required',
-  'number',
-  'maxnumber',
-  'email',
-  'agree',
+  required = 'required',
+  number = 'number',
+  maxnumber = 'maxnumber',
+  email = 'email',
+  agree = 'agree',
 }
 
 interface Error {
   name: string
   label: string
   hasError: boolean
-  errorType: keyof typeof errorType
+  errorType: errorType
 }
 
 interface FormOptions {
@@ -279,6 +289,34 @@ export default Vue.extend({
       ],
     }
   },
+
+  computed: {
+    /**
+     * @param {FormData}
+     * @return {boolean}
+     */
+    checkError() {
+      const self = this
+      return function(data: FormData) {
+        const error = self.errors.findIndex(item => item.name === data.name)
+        return error > 0
+      }
+    },
+
+    /**
+     * form要素がerrorからvalidになったらtrue
+     * @param {FormData}
+     * @return {boolean}
+     */
+    checkValid() {
+      const self = this
+      return function(data: FormData): boolean {
+        if (self.errors.length === 0) return false
+        return !self.checkError(data)
+      }
+    },
+  },
+
   methods: {
     /**
      * 一連の数値を結合して、valueにする。
@@ -321,38 +359,42 @@ export default Vue.extend({
       const data = [...this.formDataContent, ...this.formDataAddress]
 
       // check agreement
-      const agreement = this.$refs.agreement
+      const agreement = this.$refs.agreement as HTMLInputElement
       if (!agreement.checked) {
         this.errors.push({
           name: 'agreement',
           label: '個人情報の保持',
           hasError: true,
-          errorType: 'agree',
+          errorType: errorType.agree,
         })
       }
 
       // check required
       const required = data.filter(item => item.required === true && item.value === '')
-      if (required.length > 0) this.setErrors(required, 'required')
+      if (required.length > 0) this.setErrors(required, errorType.required)
 
       // check email
       // - https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type=email)
       const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
       const email = data.filter(item => item.type === 'email' && !emailRegex.test(item.value))
-      if (email.length > 0) this.setErrors(email, 'email')
+      if (email.length > 0) this.setErrors(email, errorType.email)
 
       // check number
       const numberRegex = /^[0-9]+$/
       const isNumber = data.filter(item => {
         return item.type === 'serialNumber' && item.value && !numberRegex.test(item.value)
       })
-      if (isNumber.length > 0) this.setErrors(isNumber, 'number')
+      if (isNumber.length > 0) this.setErrors(isNumber, errorType.number)
 
       // check max-number
       const number = data.filter(item => {
-        return item.type === 'serialNumber' && !item.options.every(elm => elm.value.length <= 4)
+        if (item.type === 'serialNumber') {
+          if (!item.options) return false
+          return item.options.every(elm => elm.value.length > 4)
+        }
+        return false
       })
-      if (number.length > 0) this.setErrors(number, 'maxnumber')
+      if (number.length > 0) this.setErrors(number, errorType.maxnumber)
 
       // stop submit
       return this.errors.length < 1
@@ -361,8 +403,7 @@ export default Vue.extend({
     /**
      * @param {FormData}
      */
-    setErrors(data: FormData[], type: string): void {
-      if (type === 'number') console.log(data)
+    setErrors(data: FormData[], type: errorType): void {
       data.forEach(item => {
         this.errors.push({
           name: item.name,
@@ -371,19 +412,6 @@ export default Vue.extend({
           errorType: type,
         })
       })
-    },
-
-    /**
-     * @param {FormData}
-     * @return {boolean}
-     */
-    checkError(data: FormData): boolean {
-      const error = this.errors.findIndex(item => item.name === data.name)
-      return error > 0
-    },
-    checkValid(data: FormData): boolean {
-      const error = this.errors.includes(item => item.name === data.name && item.isValid === true)
-      return error > 0
     },
   },
 })
