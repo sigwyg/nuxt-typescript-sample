@@ -11,5 +11,15 @@ module.exports = {
   rules: {
     'no-console': 'off',
     'prettier/prettier': ['warn'],
+    'vue/max-attributes-per-line': [
+      'warn',
+      {
+        singleline: 3,
+        multiline: {
+          max: 1,
+          allowFirstLine: false,
+        },
+      },
+    ],
   },
 }
