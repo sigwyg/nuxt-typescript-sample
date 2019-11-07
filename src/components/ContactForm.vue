@@ -1,5 +1,5 @@
 <template>
-  <form action method="post">
+  <form action method="post" @change="checkData">
     <template v-if="formState === 1">
       <p>
         入力必須項目には「
@@ -34,9 +34,9 @@
                   :name="data.name"
                   :class="{ hasError: checkError(data), isValid: checkValid(data) }"
                 >
-                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">{{
-                    option.text
-                  }}</option>
+                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
+                    {{ option.text }}
+                  </option>
                 </select>
                 <textarea
                   v-else-if="data.type === 'textarea'"
@@ -75,9 +75,9 @@
                   :name="data.name"
                   :class="{ hasError: checkError(data), isValid: checkValid(data) }"
                 >
-                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">{{
-                    option.text
-                  }}</option>
+                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
+                    {{ option.text }}
+                  </option>
                 </select>
                 <textarea
                   v-else-if="data.type === 'textarea'"
@@ -188,6 +188,7 @@ interface FormData {
 
 interface ContactFormData {
   formState: number
+  hasCheck: boolean
   errors: Error[]
   formDataContent: FormData[]
   formDataAddress: FormData[]
@@ -202,6 +203,7 @@ export default Vue.extend({
   data(): ContactFormData {
     return {
       formState: 1,
+      hasCheck: false,
       errors: [],
       formDataContent: [
         {
@@ -298,6 +300,7 @@ export default Vue.extend({
     checkError() {
       const self = this
       return function(data: FormData) {
+        if (!self.hasCheck) return false
         const error = self.errors.findIndex(item => item.name === data.name)
         return error > 0
       }
@@ -311,7 +314,9 @@ export default Vue.extend({
     checkValid() {
       const self = this
       return function(data: FormData): boolean {
+        if (!self.hasCheck) return false
         if (self.errors.length === 0) return false
+        if (data.required === false && data.value === '') return false
         return !self.checkError(data)
       }
     },
@@ -333,6 +338,7 @@ export default Vue.extend({
      * form change
      */
     toConfirm(): void {
+      this.hasCheck = true
       if (this.checkData()) {
         this.formState = 2
       } else {
