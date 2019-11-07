@@ -8,11 +8,21 @@
 
       <ul v-if="errors.length > 0">
         <li v-for="(data, index) in errors" :key="index">
-          <span v-if="data.errorType === 'agree'">『{{ data.label }}』への同意をお願いいたします</span>
-          <span v-else-if="data.errorType === 'required'">『{{ data.label }}』を入力してください</span>
-          <span v-else-if="data.errorType === 'email'">『{{ data.label }}』のEmail形式が間違っています</span>
-          <span v-else-if="data.errorType === 'number'">『{{ data.label }}』は半角数字で入力してください</span>
-          <span v-else-if="data.errorType === 'maxnumber'">『{{ data.label }}』の文字数が多すぎます</span>
+          <span v-if="data.errorType === 'agree'"
+            >『{{ data.label }}』への同意をお願いいたします</span
+          >
+          <span v-else-if="data.errorType === 'required'"
+            >『{{ data.label }}』を入力してください</span
+          >
+          <span v-else-if="data.errorType === 'email'"
+            >『{{ data.label }}』のEmail形式が間違っています</span
+          >
+          <span v-else-if="data.errorType === 'number'"
+            >『{{ data.label }}』は半角数字で入力してください</span
+          >
+          <span v-else-if="data.errorType === 'maxnumber'"
+            >『{{ data.label }}』の文字数が多すぎます</span
+          >
           <span v-else>『{{ data.label }}』に何かエラーがあります</span>
         </li>
       </ul>
@@ -34,7 +44,11 @@
                   :name="data.name"
                   :class="{ hasError: checkError(data), isValid: checkValid(data) }"
                 >
-                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
+                  <option
+                    v-for="(option, idx) in data.options"
+                    :key="`option${idx}`"
+                    :value="option.value"
+                  >
                     {{ option.text }}
                   </option>
                 </select>
@@ -75,7 +89,11 @@
                   :name="data.name"
                   :class="{ hasError: checkError(data), isValid: checkValid(data) }"
                 >
-                  <option v-for="(option, idx) in data.options" :key="`option${idx}`" :value="option.value">
+                  <option
+                    v-for="(option, idx) in data.options"
+                    :key="`option${idx}`"
+                    :value="option.value"
+                  >
                     {{ option.text }}
                   </option>
                 </select>
@@ -286,7 +304,11 @@ export default Vue.extend({
           type: 'serialNumber',
           name: 'tel',
           value: '',
-          options: [{ name: 'tel1', value: '' }, { name: 'tel2', value: '' }, { name: 'tel3', value: '' }],
+          options: [
+            { name: 'tel1', value: '' },
+            { name: 'tel2', value: '' },
+            { name: 'tel3', value: '' },
+          ],
         },
       ],
     }
@@ -396,9 +418,11 @@ export default Vue.extend({
       const number = data.filter(item => {
         if (item.type === 'serialNumber') {
           if (!item.options) return false
-          return item.options.every(elm => elm.value.length > 4)
+          return item.options.some(elm => {
+            console.log(elm, elm.value.length > 4)
+            return elm.value.length > 4
+          })
         }
-        return false
       })
       if (number.length > 0) this.setErrors(number, errorType.maxnumber)
 
