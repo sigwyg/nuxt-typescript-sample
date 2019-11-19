@@ -6,8 +6,9 @@ module.exports = {
     'plugin:nuxt/recommended',
     'plugin:prettier/recommended',
     'prettier/vue',
+    'plugin:cypress/recommended',
   ],
-  plugins: ['vue'],
+  plugins: ['vue', 'cypress'],
   rules: {
     'no-console': 'off',
     'prettier/prettier': ['warn'],
