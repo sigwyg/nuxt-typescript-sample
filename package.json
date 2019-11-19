@@ -9,7 +9,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate",
+    "generate": "nuxt generate --fail-on-page-error",
     "lint": "eslint --ext .ts,.js,.vue .",
     "test": "ava",
     "e2e": "start-server-and-test start http://localhost:9000 & cypress run"

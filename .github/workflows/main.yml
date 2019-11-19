@@ -6,14 +6,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: install
         run: |
           npm install
-      - name: build
+
+      - name: generate
         run: |
-          npm run start
-      - name: uat
+          npm run generate
+
+      - name: Cypress run
         run: |
           npx serve _site -l 3000 &
           npx cypress run --record false
-        
