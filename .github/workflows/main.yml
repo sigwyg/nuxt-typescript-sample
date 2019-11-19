@@ -1,4 +1,4 @@
-name: End-to-end tests
+name: Node CI
 on: [push]
 jobs:
   build_deploy:
@@ -12,23 +12,10 @@ jobs:
         with:
           node-version: '10.x'
 
-      - name: Cache dependencies
-        uses: actions/cache@v1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: install
-        run: |
-          npm install
-
-      - name: Nuxt start
-        run: |
-          npm run start
-
+      # Install NPM dependencies
+      # and run all Cypress tests
       - name: Cypress run
-        run: |
-          npx serve _site -l 3000 &
-          npx cypress run --record false
+        uses: cypress-io/github-action@v1
+        with:
+          start: npm start
+          record: false

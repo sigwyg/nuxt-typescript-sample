@@ -12,7 +12,10 @@
     "generate": "nuxt generate --fail-on-page-error",
     "lint": "eslint --ext .ts,.js,.vue .",
     "test": "ava",
-    "e2e": "start-server-and-test start http://localhost:9000 & cypress run"
+    "test:e2e": "start-server-and-test start http://localhost:3000/ cy:run",
+    "cy:run": "cypress run --record false",
+    "cy:open": "cypress open --browser chrome"
+
   },
   "husky": {
     "hooks": {
