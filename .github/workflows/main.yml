@@ -24,9 +24,9 @@ jobs:
         run: |
           npm install
 
-      - name: generate
+      - name: Nuxt start
         run: |
-          npm run generate
+          npm run start
 
       - name: Cypress run
         run: |
