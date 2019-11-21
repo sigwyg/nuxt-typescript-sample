@@ -18,4 +18,5 @@ jobs:
         uses: cypress-io/github-action@v1
         with:
           start: npm run start:ci
+          wait-on: http://localhost:3000/
           record: false
