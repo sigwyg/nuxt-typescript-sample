@@ -14,7 +14,7 @@
     "test": "ava",
     "test:e2e": "start-server-and-test start http://localhost:3000/ cy:run",
     "cy:run": "cypress run --record false",
-    "cy:open": "cypress open --browser chrome"
+    "cy:open": "cypress open"
   },
   "husky": {
     "hooks": {
