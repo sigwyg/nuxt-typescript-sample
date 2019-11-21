@@ -6,10 +6,10 @@
   "license": "ISC",
   "main": "index.js",
   "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate",
+    "dev": "nuxt-ts",
+    "build": "nuxt-ts build",
+    "start": "nuxt-ts start",
+    "generate": "nuxt-ts generate",
     "lint": "eslint --ext .ts,.js,.vue .",
     "test": "ava",
     "test:e2e": "start-server-and-test start http://localhost:3000/ cy:run",
@@ -29,6 +29,7 @@
     ]
   },
   "dependencies": {
+    "@nuxt/typescript-runtime": "^0.2.4",
     "normalize.css": "^8.0.1",
     "nuxt": "^2.10.2"
   },
