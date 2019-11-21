@@ -4,7 +4,6 @@ const config = {
     ignoreNotFoundWarnings: true,
   },
   srcDir: 'src/',
-  rootDir: './',
   head: {
     title: 'nuxt-ts-form sample',
     meta: [
@@ -23,7 +22,6 @@ const config = {
   buildModules: ['@nuxt/typescript-build'],
   build: {
     quiet: false,
-    extractCSS: true,
     extend(config: any, ctx: any) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {
