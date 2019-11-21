@@ -23,6 +23,7 @@ export default {
    */
   buildModules: ['@nuxt/typescript-build'],
   build: {
+    quiet: false,
     extractCSS: true,
     extend(config, ctx) {
       // Run ESLint on save
