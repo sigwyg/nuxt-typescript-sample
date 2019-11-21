@@ -1,11 +1,9 @@
-export default {
-  srcDir: 'src/',
-  rootDir: './',
+const config = {
   typescript: {
-    typeCheck: {
-      eslint: true,
-    },
+    typeCheck: true,
+    ignoreNotFoundWarnings: true,
   },
+  srcDir: 'src/',
   head: {
     title: 'nuxt-ts-form sample',
     meta: [
@@ -23,8 +21,8 @@ export default {
    */
   buildModules: ['@nuxt/typescript-build'],
   build: {
-    extractCSS: true,
-    extend(config, ctx) {
+    quiet: false,
+    extend(config: any, ctx: any) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {
         config.module.rules.push({
@@ -37,3 +35,5 @@ export default {
     },
   },
 }
+
+export default config
