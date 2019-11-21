@@ -17,5 +17,5 @@ jobs:
       - name: cypress run
         uses: cypress-io/github-action@v1
         with:
-          start: npm run strt:ci
+          start: npm run start:ci
           record: false
