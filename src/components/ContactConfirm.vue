@@ -31,32 +31,6 @@
 <script lang="ts">
 import Vue from 'vue'
 
-enum FormTypes {
-  text,
-  email,
-  number,
-  select,
-  checkbox,
-  radio,
-  textarea,
-}
-
-interface FormOptions {
-  value: string
-  text?: string
-  name?: string
-}
-
-interface FormData {
-  label: string
-  required: boolean
-  type: keyof typeof FormTypes
-  value: string
-  name: string
-  options?: FormOptions[]
-  mailNote?: boolean
-}
-
 export default Vue.extend({
   name: 'ContactConfirm',
 

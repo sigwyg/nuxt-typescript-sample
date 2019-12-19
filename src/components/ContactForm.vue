@@ -162,56 +162,6 @@ import Vue from 'vue'
 import ContactConfirm from '@/components/ContactConfirm.vue'
 import ContactSend from '@/components/ContactSend.vue'
 
-enum FormTypes {
-  text,
-  email,
-  number,
-  select,
-  checkbox,
-  radio,
-  textarea,
-  serialNumber,
-}
-
-enum errorType {
-  required = 'required',
-  number = 'number',
-  maxnumber = 'maxnumber',
-  email = 'email',
-  agree = 'agree',
-}
-
-interface Error {
-  name: string
-  label: string
-  hasError: boolean
-  errorType: errorType
-}
-
-interface FormOptions {
-  value: string
-  text?: string
-  name?: string
-}
-
-interface FormData {
-  label: string
-  required: boolean
-  type: keyof typeof FormTypes
-  value: string
-  name: string
-  options?: FormOptions[]
-  mailNote?: boolean
-}
-
-interface ContactFormData {
-  formState: number
-  hasCheck: boolean
-  errors: Error[]
-  formDataContent: FormData[]
-  formDataAddress: FormData[]
-}
-
 export default Vue.extend({
   name: 'ContactForm',
   components: {
@@ -396,26 +346,26 @@ export default Vue.extend({
           name: 'agreement',
           label: '個人情報の保持',
           hasError: true,
-          errorType: errorType.agree,
+          errorType: 'agree',
         })
       }
 
       // check required
       const required = data.filter(item => item.required === true && item.value === '')
-      if (required.length > 0) this.setErrors(required, errorType.required)
+      if (required.length > 0) this.setErrors(required, 'required')
 
       // check email
       // - https://html.spec.whatwg.org/multipage/input.html#e-mail-state-(type=email)
       const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
       const email = data.filter(item => item.type === 'email' && !emailRegex.test(item.value))
-      if (email.length > 0) this.setErrors(email, errorType.email)
+      if (email.length > 0) this.setErrors(email, 'email')
 
       // check number
       const numberRegex = /^[0-9]+$/
       const isNumber = data.filter(item => {
         return item.type === 'serialNumber' && item.value && !numberRegex.test(item.value)
       })
-      if (isNumber.length > 0) this.setErrors(isNumber, errorType.number)
+      if (isNumber.length > 0) this.setErrors(isNumber, 'number')
 
       // check max-number
       const number = data.filter(item => {
@@ -427,7 +377,7 @@ export default Vue.extend({
           })
         }
       })
-      if (number.length > 0) this.setErrors(number, errorType.maxnumber)
+      if (number.length > 0) this.setErrors(number, 'maxnumber')
 
       // stop submit
       return this.errors.length < 1
@@ -436,7 +386,7 @@ export default Vue.extend({
     /**
      * @param {FormData}
      */
-    setErrors(data: FormData[], type: errorType): void {
+    setErrors(data: FormData[], type: String): void {
       data.forEach(item => {
         this.errors.push({
           name: item.name,
